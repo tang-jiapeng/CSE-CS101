@@ -192,5 +192,5 @@ STUDENT_TEST("Check findNthPerfectEuclid is true"){
     EXPECT(isPerfect(findNthPerfectEuclid(2)));
     EXPECT(isPerfect(findNthPerfectEuclid(3)));
     EXPECT(isPerfect(findNthPerfectEuclid(5)));
-
 }
+

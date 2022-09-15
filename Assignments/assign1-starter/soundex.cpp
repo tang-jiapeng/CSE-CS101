@@ -12,6 +12,8 @@
 #include <cctype>
 #include <string>
 #include "vector.h"
+#include <map>
+#include <cmath>
 using namespace std;
 
 /* This function is intended to return a string which
@@ -25,8 +27,8 @@ using namespace std;
  * replace it with a description of the bug you fixed.
  */
 string removeNonLetters(string s) {
-    string result = charToString(s[0]);
-    for (int i = 1; i < s.length(); i++) {
+    string result="";
+    for (int i = 0; i < s.length(); i++) {
         if (isalpha(s[i])) {
             result += s[i];
         }
@@ -38,11 +40,49 @@ string removeNonLetters(string s) {
 /* TODO: Replace this comment with a descriptive function
  * header comment.
  */
-string soundex(string s) {
-    /* TODO: Fill in this function. */
-    return "";
+map<char,int> mp;
+void init(){
+    mp['A']=mp['E']=mp['I']=mp['O']=0;
+    mp['U']=mp['H']=mp['W']=mp['Y']=0;
+    mp['B']=mp['F']=mp['P']=mp['V']=1;
+    mp['C']=mp['G']=mp['J']=mp['K']=2;
+    mp['Q']=mp['S']=mp['X']=mp['Z']=2;
+    mp['D']=mp['T']=3;
+    mp['L']=4;
+    mp['M']=mp['N']=5;
+    mp['R']=6;
 }
 
+string soundex(string s) {
+    /* TODO: Fill in this function. */
+    init();
+    s=removeNonLetters(s);
+    for(auto &str:s){
+        str=toUpperCase(str);
+    }
+    string temp="";
+    char first=s[0];
+    for(auto str:s){
+        temp+=integerToString(mp[str]);
+    }
+    string ans="";
+    ans+=temp[0];
+    for(int i=1;i<temp.size();i++){
+        if(temp[i]=='0'||temp[i]==temp[i-1]){
+            continue;
+        }
+        ans+=temp[i];
+    }
+    ans[0]=first;
+    int Size=min((int)ans.size(),4);
+    string result=ans.substr(0,Size);
+    if(Size<4){
+        for(int i=Size;i<4;i++) {
+            result+='0';
+        }
+    }
+    return result;
+}
 
 /* TODO: Replace this comment with a descriptive function
  * header comment.
@@ -63,8 +103,24 @@ void soundexSearch(string filepath) {
     // vector named databaseNames
 
     /* TODO: Fill in the remainder of this function. */
+    while(true){
+        string name=getLine("Enter a surname (RETURN to quit): ");
+        if(name.empty()) {
+            cout<<"ALL done!"<<endl;
+            break;
+        }
+        string temp=soundex(name);
+        cout<<"Soundex code is "<<temp<<endl;
+        Vector<string> ans;
+        for(auto Name:databaseNames){
+            if(soundex(Name)==temp){
+                ans.add(Name);
+            }
+        }
+        ans.sort();
+        cout<<"Matches from database: " << ans <<endl;
+    }
 }
-
 
 /* * * * * * Test Cases * * * * * */
 
@@ -135,4 +191,11 @@ PROVIDED_TEST("Ashcraft is not a special case") {
 
 // TODO: add your test cases here
 
-
+STUDENT_TEST("Check removeNonLetters is true"){
+    string s="";
+    string result=removeNonLetters(s);
+    EXPECT_EQUAL(result,"");
+    s="23123";
+    result=removeNonLetters(s);
+    EXPECT_EQUAL(result,"");
+}

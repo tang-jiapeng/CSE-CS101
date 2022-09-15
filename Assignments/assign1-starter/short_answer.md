@@ -58,11 +58,18 @@ Soundex
 
 > Q10. What is the Soundex code for "Angelou"? What is the code for your own surname?
 
-A10. TODO
+A10. A520
 
 > Q11. Before writing any code, brainstorm your plan of attack and sketch how you might decompose the work into smaller tasks. Briefly describe your decomposition strategy.
 
-A11. TODO
+A11. 
+1. 用`map`将表中字母对应的值关系存一下
+2. 调用`removeNonLetters` 去除非字母
+3. 将字符串变成全大写，并用个变量存一下第一个字母
+4. 将字母字符串转变为对应数字的字符串
+5. 遍历字符串取出相邻相同字符的第一个和非零字符，注意第一个字符如果是0也要取出
+6. 将第一个字符用第3步存的临时变量替换掉
+7. 补全或者删除多余字符，使字符串长度为4
 
 > Q12. Think about one or more examples of a class of names that the Soundex system might not work well for. Explain what this class of names is and why the system might incorrectly group them or mis-categorize one of the names.
 
@@ -71,3 +78,4 @@ A12. TODO
 > Q13. Suppose you are a software engineer working for the U.S. government. You have been tasked with implementing a system that collects names as part of the Census survey and analyzes these names using a phonetic algorithm. Your boss suggests using Soundex and notes that the algorithm is only expected to work for ASCII-encoded strings, since supporting Unicode would require extra work and time. What would your response be and why? What representational harms might result from building a system that exclusively uses Soundex and/or ASCII?
 
 A13. TODO
+
