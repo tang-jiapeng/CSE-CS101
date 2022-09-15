@@ -58,7 +58,8 @@ Soundex
 
 > Q10. What is the Soundex code for "Angelou"? What is the code for your own surname?
 
-A10. A520
+A10. A524
+
 
 > Q11. Before writing any code, brainstorm your plan of attack and sketch how you might decompose the work into smaller tasks. Briefly describe your decomposition strategy.
 
