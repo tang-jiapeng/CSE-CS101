@@ -51,7 +51,7 @@ A8. 经过粗略计算，大概推断找到第五个数 `findPerfects`大约需�
 
 > Q9. Explain how you chose your specific test cases and why they lead you to be confident `findNthPerfectEuclid` is working correctly.
 
-A9. 我的测试用例是第1，2，3，5个完全数，本地电脑`long`类型最多测试到第5个完全数，第6个完全数位数为10，`long`类型溢出。
+A9. 我的测试用例是第1，2，3，5个完全数，本地电脑 `long`类型最多测试到第5个完全数，第6个完全数位数为10，`long`类型溢出。
 
 Soundex
 -------
@@ -60,12 +60,12 @@ Soundex
 
 A10. A524
 
-
 > Q11. Before writing any code, brainstorm your plan of attack and sketch how you might decompose the work into smaller tasks. Briefly describe your decomposition strategy.
 
-A11. 
-1. 用`map`将表中字母对应的值关系存一下
-2. 调用`removeNonLetters` 去除非字母
+A11.
+
+1. 用 `map`将表中字母对应的值关系存一下
+2. 调用 `removeNonLetters` 去除非字母
 3. 将字符串变成全大写，并用个变量存一下第一个字母
 4. 将字母字符串转变为对应数字的字符串
 5. 遍历字符串取出相邻相同字符的第一个和非零字符，注意第一个字符如果是0也要取出
@@ -74,9 +74,8 @@ A11.
 
 > Q12. Think about one or more examples of a class of names that the Soundex system might not work well for. Explain what this class of names is and why the system might incorrectly group them or mis-categorize one of the names.
 
-A12. TODO
+A12. 无
 
 > Q13. Suppose you are a software engineer working for the U.S. government. You have been tasked with implementing a system that collects names as part of the Census survey and analyzes these names using a phonetic algorithm. Your boss suggests using Soundex and notes that the algorithm is only expected to work for ASCII-encoded strings, since supporting Unicode would require extra work and time. What would your response be and why? What representational harms might result from building a system that exclusively uses Soundex and/or ASCII?
 
-A13. TODO
-
+A13. 无
