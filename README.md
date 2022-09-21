@@ -1,5 +1,3 @@
-# CS106B 
+# CS106B
 
-CS106B Summer 2022
-
-Assignments && sections
+CS106B Summer 2022  Assignments
