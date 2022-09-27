@@ -71,7 +71,28 @@ void validatePath(Grid<bool>& maze, Stack<GridLocation> path) {
 Stack<GridLocation> solveMaze(Grid<bool>& maze) {
     MazeGraphics::drawGrid(maze);
     Stack<GridLocation> path={GridLocation(0,0)};
-
+    Set<GridLocation> vis;
+    Queue<Stack<GridLocation>> bfs;
+    GridLocation mazeExit={maze.numRows()-1,maze.numCols()-1};
+    bfs.enqueue(path);
+    vis.add(path.peek());
+    while(!bfs.isEmpty()){
+        Stack<GridLocation> curPath=bfs.dequeue();
+        GridLocation end=curPath.peek();
+        if(end==mazeExit){
+            MazeGraphics::highlightPath(curPath,"green",0);
+            return curPath;
+        }
+        Set<GridLocation> neighbors=generateValidMoves(maze,end);
+        for(auto nex : neighbors){
+            if(!vis.contains(nex)){
+                vis.add(nex);
+                Stack<GridLocation> nexPath=curPath;
+                nexPath.push(nex);
+                bfs.enqueue(nexPath);
+            }
+        }
+    }
     return path;
 }
 
