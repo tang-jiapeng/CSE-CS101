@@ -15,25 +15,46 @@
 using namespace std;
 
 
-// TODO: Add a function header comment here to explain the
-// behavior of the function and how you implemented this behavior
 string cleanToken(string s)
 {
+    int pos = 0;
+    while(ispunct(s[pos])) {
+        pos++;
+    }
+    s=s.substr(pos);
+    pos=s.length()-1;
+    while(ispunct(s[pos])){
+        pos--;
+    }
+    s=s.substr(0,pos+1);
+    int count = 0;
+    for(auto &str : s){
+        if(isalpha(str)){
+            count++;
+        }
+        str=toLowerCase(str);
+    }
+    if(!count) return "";
     return s;
 }
 
-// TODO: Add a function header comment here to explain the
-// behavior of the function and how you implemented this behavior
 Set<string> gatherTokens(string text)
 {
     Set<string> tokens;
+    Vector<string> v=stringSplit(text," ");
+    for(auto str : v) {
+        if(tokens.contains(str)){
+            continue;
+        }
+        str=cleanToken(str);
+        tokens.add(str);
+    }
     return tokens;
 }
 
-// TODO: Add a function header comment here to explain the
-// behavior of the function and how you implemented this behavior
 int buildIndex(string dbfile, Map<string, Set<string>>& index)
 {
+
     return 0;
 }
 
@@ -119,3 +140,20 @@ PROVIDED_TEST("findQueryMatches from tiny.txt, compound queries") {
 
 
 // TODO: add your test cases here
+STUDENT_TEST("check cleanToken is true"){
+    EXPECT_EQUAL(cleanToken("section"),"section");
+    EXPECT_EQUAL(cleanToken("section/"),"section");
+    EXPECT_EQUAL(cleanToken("secti'on"),"secti'on");
+    EXPECT_EQUAL(cleanToken("<<>>section>>>"),"section");
+    EXPECT_EQUAL(cleanToken("section-10"),"section-10");
+    EXPECT_EQUAL(cleanToken("sECTION"),"section");
+    EXPECT_EQUAL(cleanToken("<<1sEcTion-10>>"),"1section-10");
+    EXPECT_EQUAL(cleanToken("132132>><<?!"""),"");
+}
+
+STUDENT_TEST("check gatherTokens is true"){
+    Set<string> expected = {"i", "love", "cs*106b"};
+    EXPECT_EQUAL(gatherTokens("I !_love_!    CS*106B!"), expected);
+    Set<string> expected1 = {"i", "love", "cs*106b"};
+    EXPECT_EQUAL(gatherTokens("I !_love_! love I loVE__   __CS*106B!"), expected1);
+}
