@@ -38,24 +38,42 @@ string cleanToken(string s)
     return s;
 }
 
+
 Set<string> gatherTokens(string text)
 {
     Set<string> tokens;
     Vector<string> v=stringSplit(text," ");
+    string cleanedToken;
     for(auto str : v) {
-        if(tokens.contains(str)){
-            continue;
+        cleanedToken=cleanToken(str);
+        if (!cleanedToken.empty()) {
+            tokens.add(cleanedToken);
         }
-        str=cleanToken(str);
-        tokens.add(str);
     }
     return tokens;
 }
 
 int buildIndex(string dbfile, Map<string, Set<string>>& index)
 {
-
-    return 0;
+    ifstream in;
+    if(!openFile(in,dbfile)){
+        error("Cannot open file named " + dbfile);
+    }
+    Vector<string> lines;
+    readEntireFile(in,lines);
+    int numberlines=lines.size();
+    Set<string> gathers;
+    string website,websiteText;
+    for(int i=0;i<numberlines;i+=2){
+        website=lines.get(i);
+        websiteText=lines.get(i+1);
+        for(auto tokens : gatherTokens(websiteText)){
+            gathers=index.get(tokens);
+            gathers.add(website);
+            index.put(tokens,gathers);
+        }
+    }
+    return numberlines/2;
 }
 
 // TODO: Add a function header comment here to explain the
@@ -63,7 +81,7 @@ int buildIndex(string dbfile, Map<string, Set<string>>& index)
 Set<string> findQueryMatches(Map<string, Set<string>>& index, string query)
 {
     Set<string> result;
-    // TODO: your code here
+
     return result;
 }
 
@@ -157,3 +175,49 @@ STUDENT_TEST("check gatherTokens is true"){
     Set<string> expected1 = {"i", "love", "cs*106b"};
     EXPECT_EQUAL(gatherTokens("I !_love_! love I loVE__   __CS*106B!"), expected1);
 }
+
+STUDENT_TEST("buildIndex from tiny.txt, websites containing fish") {
+    Map<string, Set<string>> index;
+    buildIndex("res/tiny.txt", index);
+    Set<string> expectedWebsites = {"www.shoppinglist.com", "www.dr.seuss.net", "www.bigbadwolf.com"};
+    EXPECT_EQUAL(index.get("fish"), expectedWebsites);
+}
+
+STUDENT_TEST("buildIndex from tiny.txt, websites containing bread") {
+    Map<string, Set<string>> index;
+    buildIndex("res/tiny.txt", index);
+    Set<string> expectedWebsites = {"www.shoppinglist.com"};
+    EXPECT_EQUAL(index.get("bread"), expectedWebsites);
+}
+
+STUDENT_TEST("buildIndex from tiny.txt, websites containing red") {
+    Map<string, Set<string>> index;
+    buildIndex("res/tiny.txt", index);
+    Set<string> expectedWebsites = {"www.rainbow.org", "www.dr.seuss.net"};
+    EXPECT_EQUAL(index.get("red"), expectedWebsites);
+}
+
+STUDENT_TEST("buildIndex from tiny.txt, websites containing red") {
+    Map<string, Set<string>> index;
+    buildIndex("res/tiny.txt", index);
+    Set<string> expectedWebsites = {"www.rainbow.org", "www.dr.seuss.net"};
+    EXPECT_EQUAL(index.get("red"), expectedWebsites);
+}
+
+STUDENT_TEST("buildIndex from tiny.txt, returned websites when using empty string as the query keyword") {
+    Map<string, Set<string>> index;
+    buildIndex("res/tiny.txt", index);
+    Set<string> expectedWebsites = {};
+    EXPECT_EQUAL(index.get(""), expectedWebsites);
+}
+
+STUDENT_TEST("Time trials of building inverted index for res/tiny.txt") {
+    Map<string, Set<string>> index;
+    TIME_OPERATION("tiny", buildIndex("res/tiny.txt", index));
+}
+
+STUDENT_TEST("Time trials of building inverted index for res/website.txt") {
+    Map<string, Set<string>> index;
+    TIME_OPERATION("tiny", buildIndex("res/website.txt", index));
+}
+
