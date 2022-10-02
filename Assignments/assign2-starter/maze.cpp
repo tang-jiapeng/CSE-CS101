@@ -67,7 +67,6 @@ void validatePath(Grid<bool>& maze, Stack<GridLocation> path) {
     }
 }
 
-
 Stack<GridLocation> solveMaze(Grid<bool>& maze) {
     MazeGraphics::drawGrid(maze);
     Stack<GridLocation> path={GridLocation(0,0)};

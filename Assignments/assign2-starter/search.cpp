@@ -11,6 +11,7 @@
 #include "set.h"
 #include "strlib.h"
 #include "vector.h"
+#include "simpio.h"
 #include "testing/SimpleTest.h"
 using namespace std;
 
@@ -76,20 +77,47 @@ int buildIndex(string dbfile, Map<string, Set<string>>& index)
     return numberlines/2;
 }
 
-// TODO: Add a function header comment here to explain the
-// behavior of the function and how you implemented this behavior
+
 Set<string> findQueryMatches(Map<string, Set<string>>& index, string query)
 {
     Set<string> result;
-
+    string cleanedItem;
+    for(auto stringItem : stringSplit(query, " ")){
+        cleanedItem = cleanToken(stringItem);
+        if(cleanedItem.size()){
+            if(stringItem[0]=='+'){
+                result.intersect(index.get(cleanedItem));
+            }else if(stringItem[0]=='-'){
+                result.difference(index.get(cleanedItem));
+            }else {
+                result.unionWith(index.get(cleanedItem));
+            }
+        }
+    }
     return result;
 }
 
-// TODO: Add a function header comment here to explain the
-// behavior of the function and how you implemented this behavior
 void searchEngine(string dbfile)
 {
-    // TODO: your code here
+    cout << "Stand by while building index..."<< endl;
+    Map<string,Set<string>> index;
+    int IndexNumbers=buildIndex(dbfile,index);
+
+    cout<< "Indexed "<<IndexNumbers <<" pages containing "
+                     <<index.size()<<" unique terms" <<endl;
+
+    while(true){
+        string input;
+        input = getLine("Enter query sentence (RETURN/ENTER to quit):");
+        if(!input.size()){
+            break;
+        }
+        Set<string> matches;
+        matches=findQueryMatches(index,input);
+        cout << "Found "<<matches.size()<<" matching pages "<<endl
+             <<matches<<endl;
+    }
+    cout<<"ALL done!"<<endl;
 }
 
 /* * * * * * Test Cases * * * * * */
@@ -221,3 +249,37 @@ STUDENT_TEST("Time trials of building inverted index for res/website.txt") {
     TIME_OPERATION("tiny", buildIndex("res/website.txt", index));
 }
 
+STUDENT_TEST("findQueryMatches from tiny.txt, invalid queries") {
+    Map<string, Set<string>> index;
+    buildIndex("res/tiny.txt", index);
+    Set<string> matchesWithEmptyQuery = findQueryMatches(index, "");
+    EXPECT_EQUAL(matchesWithEmptyQuery.size(), 0);
+    Set<string> matchesWithInvalid1 = findQueryMatches(index, "&$1 +123 -%#");
+    EXPECT_EQUAL(matchesWithInvalid1.size(), 0);
+    Set<string> matchesWithInvalid2 = findQueryMatches(index, "+=-&$1 +123 +%#");
+}
+
+STUDENT_TEST("findQueryMatches from tiny.txt, compound queries interleaved with invalid terms") {
+    Map<string, Set<string>> index;
+    buildIndex("res/tiny.txt", index);
+    Set<string> matchesRedOrFish = findQueryMatches(index, "red +&34 fish -**88");
+    EXPECT_EQUAL(matchesRedOrFish.size(), 4);
+    Set<string> matchesRedAndFish = findQueryMatches(index, "+-*)( red +fish");
+    EXPECT_EQUAL(matchesRedAndFish.size(), 1);
+    Set<string> matchesRedWithoutFish = findQueryMatches(index, "--+*&^ red -fish +-+134");
+    EXPECT_EQUAL(matchesRedWithoutFish.size(), 1);
+}
+
+STUDENT_TEST("findQueryMatches from tiny.txt, matches of compound queries") {
+    Map<string, Set<string>> index;
+    buildIndex("res/tiny.txt", index);
+    Set<string> matches1 = findQueryMatches(index, "fish -+bread I**");
+    Set<string> expectedMatches1 = {"www.dr.seuss.net", "www.bigbadwolf.com"};
+    EXPECT_EQUAL(matches1, expectedMatches1);
+    Set<string> matches2 = findQueryMatches(index, "red -blue +green");
+    Set<string> expectedMatches2 = {};
+    EXPECT_EQUAL(matches2, expectedMatches2);
+    Set<string> matches3 = findQueryMatches(index, "red -blue green");
+    Set<string> expectedMatches3 = {"www.rainbow.org"};
+    EXPECT_EQUAL(matches3, expectedMatches3);
+}
