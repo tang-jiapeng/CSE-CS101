@@ -1,0 +1,11 @@
+# assign3-1 作业完成记录
+
+通过所有测试样例：
+
+* Tests from PROVIDED_TEST
+
+![1665316598226](image/README/1665316598226.png)![1665316605673](image/README/1665316605673.png)
+
+* Tests from STUDENT_TEST
+
+  ![1665316622255](image/README/1665316622255.png)
