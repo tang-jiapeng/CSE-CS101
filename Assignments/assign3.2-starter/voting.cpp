@@ -4,11 +4,40 @@
 #include "testing/SimpleTest.h"
 using namespace std;
 
+int solve(Vector<int>& blocks,int target,int index,int Sum,int sum){
+    if(index==target){
+        index++;
+    }
+    if(sum>Sum/2){
+        return 0;
+    }
+    if(index==blocks.size()){
+        if(blocks[target]+sum>Sum/2){
+            return 1;
+        }else{
+            return 0;
+        }
+    }
+    int One=solve(blocks,target,index+1,Sum,sum);
+    int Two=solve(blocks,target,index+1,Sum,sum+blocks[index]);
+    return One+Two;
+}
 
 Vector<int> computePowerIndexes(Vector<int>& blocks)
 {
-    Vector<int> result;
-    // TODO your code here
+    Vector<int> result(blocks.size(),0);
+    int Sum=0,res=0;
+    for(auto block : blocks){
+        Sum+=block;
+    }
+    for(int i=0;i<blocks.size();i++){
+        int temp=solve(blocks,i,0,Sum,0);
+        res+=temp;
+        result[i]=temp;
+    }
+    for(auto& v:result){
+        v=v*1.0/res*100;
+    }
     return result;
 }
 
