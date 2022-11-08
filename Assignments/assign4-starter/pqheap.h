@@ -95,6 +95,13 @@ public:
 
 private:
     /* TODO: Add whatever fields, types, and helper functions that you'd like! */
+    DataPoint *_elements;
+    int _numAllocated;
+    int _numFilled;
+    void swap(int indexA,int indexB);
+    bool larger(int indexA,int indexB);
+    void swim(int child);
+    void sink(int parent);
 
     /* While not a strict requirement, we strongly recommend implementing the
      * helper functions declared below. They will make your code much cleaner, and

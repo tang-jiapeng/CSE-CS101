@@ -151,6 +151,10 @@ void PQArray::validateInternalState() const {
 /* * * * * * Test Cases Below This Point * * * * * */
 
 /* TODO: Add your own custom tests here! */
+
+void fillQueue(PQArray& pq, int n);
+void emptyQueue(PQArray& pq, int n);
+
 STUDENT_TEST("PQArray timing test, fillQueue(enqueue)") {
     for (int size = 10000; size <= 80000; size *= 2) {
         PQArray pq;

@@ -34,8 +34,23 @@ void pqSort(Vector<DataPoint>& v) {
  * delete this comment.
  */
 Vector<DataPoint> topK(istream& stream, int k) {
-    
-    return {};
+    PQArray pq;
+    DataPoint cur;
+    while(stream>>cur){
+        if(pq.size()<k) {
+            pq.enqueue(cur);
+        }else{
+            if(cur.priority>pq.peek().priority){
+                pq.dequeue();
+                pq.enqueue(cur);
+            }
+        }
+    }
+    Vector<DataPoint> result(pq.size());
+    for(int i=pq.size()-1;i>=0;i--){
+        result.set(i,pq.dequeue());
+    }
+    return result;
 }
 
 
@@ -83,10 +98,22 @@ STUDENT_TEST("pqSort timing test") {
     }
 }
 
+STUDENT_TEST("topK: time trial n") {
+    int k = 10;
+    for (int n = 200000; n <= 1600000; n *= 2) {
+        stringstream stream = asStream(0, n);
+        TIME_OPERATION(n, topK(stream, k));
 
+    }
+}
 
-
-
+STUDENT_TEST("topK: time trial  k") {
+    int n = 100000;
+    for (int k = 500; k <= 4000; k *= 2) {
+        stringstream stream = asStream(0, n);
+        TIME_OPERATION(k, topK(stream, k));
+    }
+}
 
 
 
