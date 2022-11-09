@@ -23,7 +23,7 @@ void PQHeap::enqueue(DataPoint elem) {
     if(_numAllocated==_numFilled){
         DataPoint * temp=_elements;
         _numAllocated*=2;
-        _elements=new DataPoint[_numAllocated]();
+        _elements=new DataPoint[_numAllocated];
         for(int i=0;i<_numFilled;i++){
             _elements[i]=temp[i];
         }
@@ -71,22 +71,29 @@ void PQHeap::swap(int indexA,int indexB){
     _elements[indexB]=temp;
 }
 
-void PQHeap::swim(int child){
-    while(child>=0&&larger(getParentIndex(child),child)){
-        swap(getParentIndex(child),child);
-        child=getParentIndex(child);
+
+void PQHeap::swim(int index){
+    int parentIndex = getParentIndex(index);
+    if (parentIndex != -1) {
+        if (larger(parentIndex, index)) {
+            swap(index, parentIndex);
+            swim(parentIndex);
+        }
     }
 }
 
-void PQHeap::sink(int parent){
-    while(getLeftChildIndex(parent)>=0){
-        int older=getLeftChildIndex(parent);
-        if(getRightChildIndex(parent)>=0&&larger(older,getRightChildIndex(parent))){
-            older=getRightChildIndex(parent);
+void PQHeap::sink(int index){
+    int left = getLeftChildIndex(index);
+    int right = getRightChildIndex(index);
+    if (left != -1) {
+        int indexOfSmallerChild=left;
+        if (right != -1 && larger(left, right)) {
+            indexOfSmallerChild = right;
         }
-        if(larger(older,parent)) break;
-        swap(parent,older);
-        parent=older;
+        if (larger(index, indexOfSmallerChild)) {
+            swap(index, indexOfSmallerChild);
+            sink(indexOfSmallerChild);
+        }
     }
 }
 
@@ -103,7 +110,7 @@ void PQHeap::printDebugInfo(string msg) const {
 
 void PQHeap::validateInternalState() const {
     if (_numFilled > _numAllocated) error("Too many elements in not enough space!");
-    for (int i = 1; i < size(); i++) {
+    for (int i = 0; i < size(); i++) {
         int left = getLeftChildIndex(i);
         int right = getRightChildIndex(i);
         if (left != -1 && _elements[i].priority > _elements[left].priority) {
@@ -140,53 +147,53 @@ int PQHeap::getRightChildIndex(int parent) const {
 
 /* * * * * * Test Cases Below This Point * * * * * */
 
-//STUDENT_TEST("PQHeap: operations size/isEmpty/clear") {
-//    PQHeap pq;
+STUDENT_TEST("PQHeap: operations size/isEmpty/clear") {
+    PQHeap pq;
 
-//    EXPECT(pq.isEmpty());
-//    pq.clear();
-//    EXPECT_EQUAL(pq.isEmpty(), pq.size() == 0);
-//    pq.enqueue({ "", 7 });
-//    EXPECT_EQUAL(pq.size(), 1);
-//    pq.enqueue({ "", 5 });
-//    EXPECT_EQUAL(pq.size(), 2);
-//    pq.enqueue({ "", 5 });
-//    EXPECT_EQUAL(pq.size(), 3);
-//    pq.validateInternalState();
-//    pq.clear();
-//    pq.validateInternalState();
-//    EXPECT(pq.isEmpty());
-//    EXPECT_EQUAL(pq.size(), 0);
-//}
+    EXPECT(pq.isEmpty());
+    pq.clear();
+    EXPECT_EQUAL(pq.isEmpty(), pq.size() == 0);
+    pq.enqueue({ "", 7 });
+    EXPECT_EQUAL(pq.size(), 1);
+    pq.enqueue({ "", 5 });
+    EXPECT_EQUAL(pq.size(), 2);
+    pq.enqueue({ "", 5 });
+    EXPECT_EQUAL(pq.size(), 3);
+    pq.validateInternalState();
+    pq.clear();
+    pq.validateInternalState();
+    EXPECT(pq.isEmpty());
+    EXPECT_EQUAL(pq.size(), 0);
+}
 
-//STUDENT_TEST("PQHeap: enqueue, dequene and peek, size, isEmpty") {
-//    PQHeap pq;
-//    EXPECT(pq.isEmpty());
-//    pq.enqueue({ "A", 7 });
-//    pq.enqueue({ "C", 2 });
-//    pq.enqueue({ "B", 5 });
-//    pq.enqueue({ "D", 3 });
-//    pq.enqueue({ "E", 1 });
-//    EXPECT(!pq.isEmpty());
-//    EXPECT_EQUAL(pq.size(), 5);
-//    EXPECT_EQUAL(pq.peek(), {"E", 1});
-//    EXPECT_EQUAL(pq.dequeue(), {"E", 1});
-//    EXPECT_EQUAL(pq.size(), 4);
-//    EXPECT_EQUAL(pq.peek(), {"C", 2});
-//    EXPECT_EQUAL(pq.dequeue(), {"C", 2});
-//    EXPECT_EQUAL(pq.size(), 3);
-//    EXPECT_EQUAL(pq.peek(), {"D", 3});
-//    EXPECT_EQUAL(pq.dequeue(), {"D", 3});
-//    EXPECT_EQUAL(pq.size(), 2);
-//    EXPECT(!pq.isEmpty());
-//    EXPECT_EQUAL(pq.peek(), {"B", 5});
-//    EXPECT_EQUAL(pq.dequeue(), {"B", 5});
-//    EXPECT_EQUAL(pq.size(), 1);
-//    EXPECT_EQUAL(pq.peek(), {"A", 7});
-//    EXPECT_EQUAL(pq.dequeue(), {"A", 7});
-//    EXPECT_EQUAL(pq.size(), 0);
-//    EXPECT(pq.isEmpty());
-//}
+STUDENT_TEST("PQHeap: enqueue, dequene and peek, size, isEmpty") {
+    PQHeap pq;
+    EXPECT(pq.isEmpty());
+    pq.enqueue({ "A", 7 });
+    pq.enqueue({ "C", 2 });
+    pq.enqueue({ "B", 5 });
+    pq.enqueue({ "D", 3 });
+    pq.enqueue({ "E", 1 });
+    EXPECT(!pq.isEmpty());
+    EXPECT_EQUAL(pq.size(), 5);
+    EXPECT_EQUAL(pq.peek(), {"E", 1});
+    EXPECT_EQUAL(pq.dequeue(), {"E", 1});
+    EXPECT_EQUAL(pq.size(), 4);
+    EXPECT_EQUAL(pq.peek(), {"C", 2});
+    EXPECT_EQUAL(pq.dequeue(), {"C", 2});
+    EXPECT_EQUAL(pq.size(), 3);
+    EXPECT_EQUAL(pq.peek(), {"D", 3});
+    EXPECT_EQUAL(pq.dequeue(), {"D", 3});
+    EXPECT_EQUAL(pq.size(), 2);
+    EXPECT(!pq.isEmpty());
+    EXPECT_EQUAL(pq.peek(), {"B", 5});
+    EXPECT_EQUAL(pq.dequeue(), {"B", 5});
+    EXPECT_EQUAL(pq.size(), 1);
+    EXPECT_EQUAL(pq.peek(), {"A", 7});
+    EXPECT_EQUAL(pq.dequeue(), {"A", 7});
+    EXPECT_EQUAL(pq.size(), 0);
+    EXPECT(pq.isEmpty());
+}
 
 STUDENT_TEST("PQHeap: test enlarge array memory") {
     for (int size = 5; size <= 500; size *= 5) {
